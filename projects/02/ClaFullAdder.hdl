@@ -1,0 +1,17 @@
+// Full adder for Carry Look Ahead that also outputs a generate bit and a propagate bit
+/**
+ * Adds two bits.
+ * outputs generate, propagate, and sum
+ */
+
+CHIP ClaFullAdder {
+    IN a, b, c;
+    OUT sum, gen, prop;
+
+    PARTS:
+   And(a=a, b=b, out=gen);
+   Or(a=a, b=b, out=prop);
+
+   Xor(a=a, b=b, out=sum1);
+   Xor(a=sum1, b=c, out=sum);
+}
