@@ -40,4 +40,47 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+
+    Mux16(a=instruction, b=ALUout, sel=instruction[15], out=out1);
+
+    Not(in=instruction[15],out=notInstruction);
+    Or(a=notInstruction, b=instruction[5], out=loadA);
+    ARegister(in=out1, load=loadA, out=outA, out[0..14]=addressM); // A register
+
+
+    And(a=instruction[15], b=instruction[12], out=AorM); // 
+    Mux16(a=outA, b=inM, sel=AorM, out=out2);
+
+    And(a=instruction[15], b=instruction[4], out=loadD);
+    DRegister(in=ALUout, load=loadD, out=outD); // D register
+    ALU(x=outD, y=out2, zx=instruction[11], 
+                        nx=instruction[10],
+                        zy=instruction[9],
+                        ny=instruction[8],
+                        f=instruction[7],
+                        no=instruction[6],
+                        out=ALUout, out=outM,
+                        zr=outZR, ng=outNG);
+
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+    // jump logic
+    Not(in=outNG, out=positive);
+    Not(in=outZR, out=notZR);
+    And(a=positive,b=notZR, out=posNotZR);
+    And(a=instruction[0],b=posNotZR, out=jumpGT);
+
+    And(a=instruction[1], b=outZR, out=jumpEQ);
+
+    And(a=instruction[2],b=outNG, out=jumpLT); /jlt
+
+    Or(a=jumpGT, b=jumpEQ, out=jumpGE);
+    Or(a=jumpGE, b=jumpLT, out=jump);
+
+    And(a=instruction[15], b=jump, out=loadPC);  //jump on C instruction but not A
+    Not(in=loadPC, out=incPC);
+
+    PC(in=outA,load=loadPC,inc=incPC,reset=reset, out[0..14]=pc);
+ 
+
 }
