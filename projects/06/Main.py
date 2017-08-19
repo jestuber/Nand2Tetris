@@ -9,6 +9,7 @@ filename = sys.argv[1]
 asm_file = open(filename, "r")
 # open hack file
 hackname = "out.hack"
+open(hackname, 'w').close()  # clear old output file
 hack_file = open(hackname, "a")
 n = 0  # initialize instruction count
 for line in asm_file:
@@ -24,6 +25,6 @@ for line in asm_file:
 # translate line
     binary = Code.translate(parsed, instruct_type)
 # write line to hack file and newline
-
+    hack_file.write(binary + "\n")
 asm_file.close()
 hack_file.close()
