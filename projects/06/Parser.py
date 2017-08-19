@@ -6,6 +6,8 @@ def getInstrType(line):
 
 
 def parse(line, type):
+    #get rid of inline comments
+    line = line.split('//')[0].strip()
     if type == "A":
         # get number after @
         address = line[1:]
